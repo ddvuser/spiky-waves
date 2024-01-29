@@ -30,6 +30,12 @@ Grant privileges to newly created user:
 GRANT ALL PRIVILEGES ON DATABASE spiky_db TO spiky_admin;
 ```
 
+Or grant owner permission:
+
+```psql
+ALTER DATABASE spiky_db OWNER TO spiky_admin;
+```
+
 ## Environment configuration
 
 Create 2 files along side settings.py, 1 - `.env.dev`, 2 - `.env.db.dev`.
