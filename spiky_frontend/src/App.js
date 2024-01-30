@@ -1,6 +1,7 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import PrivateRoute from './utils/PrivateRoute';
+import { AuthProvider } from './context/AuthContext';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -10,11 +11,13 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route element={<PrivateRoute component={HomePage} />} path='/*' exact />
-          <Route element={<LoginPage />} path='/login' />
-        </Routes>
+        <AuthProvider>
+          <Header />
+          <Routes>
+            <Route element={<PrivateRoute component={HomePage} />} path='/*' exact />
+            <Route element={<LoginPage />} path='/login' />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </div>
   );
