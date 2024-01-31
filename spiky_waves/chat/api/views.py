@@ -28,3 +28,17 @@ class MyChats(generics.ListAPIView):
 
         return messages
     
+class GetMessages(generics.ListAPIView):
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        sender_id = self.kwargs['sender_id']
+        receiver_id = self.kwargs['receiver_id']
+
+        messages = Message.objects.filter(
+            sender__in = [sender_id, receiver_id],
+            receiver__in = [sender_id, receiver_id]
+        )
+
+        return messages
+    
