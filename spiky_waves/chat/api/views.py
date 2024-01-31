@@ -1,11 +1,15 @@
-from .serializers import MessageSerializer
-from chat.models import Message
+from .serializers import MessageSerializer, ProfileSerializer
+from chat.models import Message, Profile
 from authentication.models import CustomUser
 from rest_framework import generics
 from django.db.models import Subquery, Q, OuterRef
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 
 class MyMessages(generics.ListAPIView):
     serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
@@ -30,6 +34,7 @@ class MyMessages(generics.ListAPIView):
     
 class GetMessages(generics.ListAPIView):
     serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         sender_id = self.kwargs['sender_id']
@@ -44,4 +49,31 @@ class GetMessages(generics.ListAPIView):
     
 class SendMessage(generics.CreateAPIView):
     serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+
+class ProfileDetail(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Profile.objects.all()
+
+class SearchUser(generics.ListAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Profile.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        username = self.kwargs['username']
+        logged_in_user = self.request.user
+        users = Profile.objects.filter(
+            Q(user__username__icontains=username)|
+            Q(user__email__icontains=username) &
+            ~Q(user=logged_in_user)
+        )
+        if not users.exists():
+            return Response(
+                {"detail": "No users found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = self.get_serializer(users, many=True)
+        return Response(serializer.data)
     

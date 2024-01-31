@@ -1,6 +1,6 @@
 from django.contrib import admin
 from authentication.models import CustomUser
-from chat.models import Message
+from chat.models import Message, Profile
 
 class MessageAdmin(admin.ModelAdmin):
     list_editable = ['is_read']
@@ -8,3 +8,4 @@ class MessageAdmin(admin.ModelAdmin):
 
 admin.site.register(CustomUser)
 admin.site.register(Message, MessageAdmin)
+admin.site.register(Profile)
