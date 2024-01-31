@@ -4,7 +4,7 @@ from authentication.models import CustomUser
 from rest_framework import generics
 from django.db.models import Subquery, Q, OuterRef
 
-class MyChats(generics.ListAPIView):
+class MyMessages(generics.ListAPIView):
     serializer_class = MessageSerializer
 
     def get_queryset(self):
@@ -41,4 +41,7 @@ class GetMessages(generics.ListAPIView):
         )
 
         return messages
+    
+class SendMessage(generics.CreateAPIView):
+    serializer_class = MessageSerializer
     
