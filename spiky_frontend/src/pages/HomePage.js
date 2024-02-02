@@ -60,11 +60,15 @@ const HomePage = () => {
             }
             <div className="flex-grow-1 ml-3">
                 {message.sender.id === user.user_id && 
-                  (message.receiver.name !== null ? message.receiver.name : message.receiver.username)
+                  (message.receiver.name !== null  && message.receiver.surname !== null ? 
+                    message.receiver.name + " " + message.receiver.surname : 
+                    message.receiver.username)
                 }
 
                 {message.sender.id !== user.user_id && 
-                  (message.sender.username) 
+                  (message.sender.name !== null && message.sender.surname !== null ?
+                    message.sender.name + " " + message.sender.surname :
+                    message.sender.username ) 
                 }
               <div className="small">
                   <small>{message.text}</small>
