@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from '../context/AuthContext';
 import { useParams } from 'react-router-dom';
+import MessageDetail from '../components/MessageDetail';
 
 function InboxPage() {
     let [messages, setMessages] = useState([]);
@@ -11,7 +12,7 @@ function InboxPage() {
         myMessages();
     }, [])
 
-    console.log(messages);
+    //console.log(messages);
 
     let myMessages = async () => {
         let response = await fetch(`http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${routeParams.id}/`, {
@@ -31,8 +32,13 @@ function InboxPage() {
     }    
 
     return (
-        <div>InboxPage</div>
+        <div className='container'>
+            <h2>Inbox</h2>
+            {messages.map((message) => (
+                <MessageDetail key={message.id} message={message} user={user} />
+            ))}
+        </div>
     )
 }
 
-export default InboxPage
+export default InboxPage;

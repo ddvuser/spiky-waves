@@ -30,11 +30,13 @@ const HomePage = () => {
   return (
     <div className='container-fluid'>
       <h3>HomePage</h3>
-      <ul>
-        {messages.map((message) =>
-          <MessageListItem key={message.id} message={message} user={user} />
-        )}
-      </ul>
+      <div>
+        <ul className='list-group'>
+          {messages.map((message) =>
+            <MessageListItem key={message.id} message={message} user={user} />
+          )}
+        </ul>
+      </div>
     </div>
   )
 }
