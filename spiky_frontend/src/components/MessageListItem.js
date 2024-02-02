@@ -10,11 +10,6 @@ const MessageListItem = ({ message, user }) => {
       href="#"
       className="list-group-item list-group-item-action border-0"
     >
-      <small>
-        <div className="badge bg-success float-right text-white">
-          {moment.utc(message.created).local().startOf('seconds').fromNow()}
-        </div>
-      </small>
       <div className="d-flex align-items-start">
         {message.sender.id !== user.user_id && (
           <img
@@ -49,11 +44,17 @@ const MessageListItem = ({ message, user }) => {
               
           <div className="small">
             <small>
-              {message.text.substring(0, 20)} {message.text.length >= 20 && '...'}
+              {`${message.sender.id === user.user_id ?
+                "me" : message.sender.username}: ${message.text}`.substring(0, 30)} {message.text.length >= 20 && '...'}
             </small>
           </div>
         </div>
       </div>
+      <small>
+        <span className="badge bg-primary badge-pill text-white">
+          {moment.utc(message.created).local().startOf('seconds').fromNow()}
+        </span>
+      </small>
     </Link>
   );
 };
