@@ -21,3 +21,13 @@ class Message(models.Model):
     def __str__(self) -> str:
         return f"{self.sender} to {self.receiver}"
     
+    @property
+    def sender_profile(self):
+        sender_profile = Profile.objects.get(user=self.sender)
+        return sender_profile
+
+    @property
+    def receiver_profile(self):
+        receiver_profile = Profile.objects.get(user=self.receiver)
+        return receiver_profile
+    
