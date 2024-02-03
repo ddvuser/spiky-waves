@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from '../context/AuthContext';
 import MessageDetail from '../components/MessageDetail';
+import './HomePage.css';
+import Loading from '../components/Loading';
 
-function InboxPage({ participantID }) {
+function InboxPage({ participantID, onSelect, selectedMessage }) {
     let [messages, setGetMessages] = useState([]);
     let {user, authTokens, logoutUser} = useContext(AuthContext);
+
+    let [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         getMessages();
     }, [])
-
-    //console.log(messages);
-    console.log(`pariticipant ` + participantID);
 
     let getMessages = async () => {
         let response = await fetch(`http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${participantID}/`, {
@@ -23,6 +24,7 @@ function InboxPage({ participantID }) {
         })
         let data = await response.json();
         if (response.status === 200) {
+            setIsLoading(false);
             setGetMessages(data);
         }
         else if (response.statusText === 'Unauthorized') {
@@ -32,12 +34,25 @@ function InboxPage({ participantID }) {
 
     return (
         <div>
-            <h2>Inbox</h2>
-            <div>
-                {messages.map((message) => (
-                    <MessageDetail key={message.id} message={message} user={user} />
-                ))}
-            </div>
+            {isLoading ? (<Loading />)
+            :
+            (
+                <div>
+                    <div className='d-flex align-items-center justify-content-between'>
+                        <h2>Inbox</h2>
+                        {selectedMessage && (
+                            <button onClick={() => onSelect()} className='btn btn-primary btn-sm'>
+                                Back to List
+                            </button>
+                        )}
+                    </div>
+                    <div className='inbox-page'>
+                        {messages.map((message) => (
+                            <MessageDetail key={message.id} message={message} user={user} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

@@ -1,0 +1,8 @@
+/* InboxPage.css */
+
+.inbox-page {
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+
