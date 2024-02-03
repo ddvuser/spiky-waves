@@ -1,14 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import moment from 'moment';
 
-const MessageListItem = ({ message, user }) => {
+const MessageListItem = ({ message, user, onClick }) => {
+
   return (
-    <Link
+    <li
       key={message.id}
-      to={`/inbox/${message.sender.id === user.user_id ? message.receiver.id : message.sender.id}/`}
-      href="#"
       className="list-group-item list-group-item-action border-0"
+      onClick={() => onClick()}
     >
       <div className="d-flex align-items-start">
         {message.sender.id !== user.user_id && (
@@ -55,7 +54,7 @@ const MessageListItem = ({ message, user }) => {
           {moment.utc(message.created).local().startOf('seconds').fromNow()}
         </span>
       </small>
-    </Link>
+    </li>
   );
 };
 

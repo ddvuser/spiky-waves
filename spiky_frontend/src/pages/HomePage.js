@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from '../context/AuthContext';
 import MessageListItem from '../components/MessageListItem';
+import InboxPage from './InboxPage';
 
 const HomePage = () => {
   let [messages, setMessages] = useState([]);
   let {user, authTokens, logoutUser} = useContext(AuthContext);
+
+  const [selectedMessage, setSelectedMessage] = useState(null);
 
   useEffect(() => {
     myMessages();
@@ -27,15 +30,26 @@ const HomePage = () => {
     }
   }
 
+  const handleItemClick = (message) => {
+    setSelectedMessage(message);
+    console.log(selectedMessage);
+  }
+
+
   return (
     <div className='container-fluid'>
       <h3>HomePage</h3>
-      <div>
+      <div className='d-flex'>
         <ul className='list-group'>
           {messages.map((message) =>
-            <MessageListItem key={message.id} message={message} user={user} />
+            <MessageListItem key={message.id} message={message} user={user} onClick={() => handleItemClick(message)} />
           )}
         </ul>
+        <div> 
+          {selectedMessage && 
+            <InboxPage participantID={selectedMessage.sender.id !== user.user_id ? selectedMessage.sender.id 
+            : selectedMessage.receiver.id} />}
+        </div>
       </div>
     </div>
   )

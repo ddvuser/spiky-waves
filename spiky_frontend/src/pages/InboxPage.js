@@ -1,21 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from '../context/AuthContext';
-import { useParams } from 'react-router-dom';
 import MessageDetail from '../components/MessageDetail';
 
-function InboxPage() {
-    let [messages, setMessages] = useState([]);
+function InboxPage({ participantID }) {
+    let [messages, setGetMessages] = useState([]);
     let {user, authTokens, logoutUser} = useContext(AuthContext);
-    let routeParams = useParams();
 
     useEffect(() => {
-        myMessages();
+        getMessages();
     }, [])
 
     //console.log(messages);
+    console.log(`pariticipant ` + participantID);
 
-    let myMessages = async () => {
-        let response = await fetch(`http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${routeParams.id}/`, {
+    let getMessages = async () => {
+        let response = await fetch(`http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${participantID}/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -24,7 +23,7 @@ function InboxPage() {
         })
         let data = await response.json();
         if (response.status === 200) {
-            setMessages(data);
+            setGetMessages(data);
         }
         else if (response.statusText === 'Unauthorized') {
             logoutUser();
@@ -32,11 +31,13 @@ function InboxPage() {
     }    
 
     return (
-        <div className='container'>
+        <div>
             <h2>Inbox</h2>
-            {messages.map((message) => (
-                <MessageDetail key={message.id} message={message} user={user} />
-            ))}
+            <div>
+                {messages.map((message) => (
+                    <MessageDetail key={message.id} message={message} user={user} />
+                ))}
+            </div>
         </div>
     )
 }
