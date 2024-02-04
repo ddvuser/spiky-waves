@@ -39,7 +39,7 @@ function RegisterPage() {
                     {/* Password */}
                     <div className='form-group'>
                         <label className='mb-1' htmlFor='register-password1'>Password:</label>
-                        <input className='form-control' type='password' name='password1' id='register-password1' placeholder='...' />
+                        <input className='form-control' type='password' name='password' id='register-password1' placeholder='...' />
                     </div>
                     <div className='form-group'>
                         <label className='mb-1' htmlFor='register-password2'>Password confirmation:</label>

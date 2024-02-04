@@ -24,9 +24,47 @@ export const AuthProvider = ({children}) => {
     );
 
     let [loading, setLoading] = useState(true);
-
     let navigate = useNavigate();
 
+    // Register
+    let registerUser = async (e) => {
+        e.preventDefault();
+        if (e.target.password.value === e.target.password2.value) {
+            let response = await fetch('http://127.0.0.1:8000/auth/api/create-user/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'email': e.target.email.value,  
+                    'username': e.target.username.value,
+                    'name': e.target.name.value,
+                    'surname': e.target.surname.value,
+                    'phone': e.target.phone.value,
+                    'password': e.target.password.value,
+                    'password2': e.target.password2.value,
+                })
+            });
+            if (response.status === 201) {
+                await fetch('http://127.0.0.1:8000/auth/api/token/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'email':e.target.email.value, 'password': e.target.password.value})
+
+                });
+                navigate('/login');
+            }
+            else {
+                alert('Error')
+            }
+        }
+        else {
+            alert('Error')
+        }
+    }
+    // Login
     let loginUser = async (e) => {
         e.preventDefault();
         let response = await fetch('http://127.0.0.1:8000/auth/api/token/', {
@@ -50,7 +88,7 @@ export const AuthProvider = ({children}) => {
         }
 
     }
-
+    // Logout
     let logoutUser = () => {
         setAuthTokens(null);
         setUser(null);
@@ -89,6 +127,7 @@ export const AuthProvider = ({children}) => {
         user: user,
         loginUser: loginUser,
         logoutUser: logoutUser,
+        registerUser: registerUser,
     }
 
     useEffect(() => {

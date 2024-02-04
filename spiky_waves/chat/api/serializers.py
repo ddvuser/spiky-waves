@@ -2,11 +2,6 @@ from chat.models import Profile, Message
 from authentication.models import CustomUser
 from rest_framework import serializers
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ['email', 'is_staff']
-
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile

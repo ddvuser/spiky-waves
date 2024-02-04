@@ -1,8 +1,28 @@
-from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.generics import CreateAPIView
+from authentication.models import CustomUser
+from rest_framework import status
+from .serializers import UserSerializer
+
+class UserCreateView(CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        password = serializer.validated_data['password']
+        user = serializer.save()
+        user.set_password(password)
+        user.save()
+
+        # Obtain tokens for the new user
+        token_serializer = MyTokenObtainPairSerializer(data={'email': user.email, 'password': password})
+        token_serializer.is_valid(raise_exception=True)
+        tokens = token_serializer.validated_data
+
+        return Response(tokens, status=status.HTTP_201_CREATED)
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -21,6 +41,7 @@ def get_routes(request):
     routes = [
         'api/token',
         'api/token/refresh',
+        'create-user/',
     ]
 
     return Response(routes)
