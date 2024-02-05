@@ -60,7 +60,6 @@ const HomePage = () => {
 
    return (
     <div className='container-fluid'>
-      <h3>HomePage</h3>
       {isLoading ? (<Loading />)
         : (
           <div className='row'>
@@ -79,6 +78,7 @@ const HomePage = () => {
                   />
                 ) : (
                   <ul className='list-group inbox-page'>
+                    <h3>Chats</h3>
                     {messages.map((message) => (
                       <MessageListItem
                         key={message.id}
@@ -94,6 +94,7 @@ const HomePage = () => {
             ) : (
               <>
                 <div className='col'>
+                  <h3>Chats</h3>
                   <ul className='list-group inbox-page'>
                     {messages.map((message) => (
                       <MessageListItem

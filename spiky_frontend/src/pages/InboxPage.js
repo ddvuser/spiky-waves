@@ -11,8 +11,34 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
     let [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        console.log('messages refreshed');
         getMessages();
     }, [])
+
+    const [newMessage, setNewMessage] = useState('');
+
+    const handleSendMessage = async () => {
+        let response = await fetch('http://127.0.0.1:8000/chat/api/send-messages/', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + String(authTokens.access)
+            },
+            body: JSON.stringify({
+                'sender': user.user_id,
+                'receiver': participantID,
+                'text': newMessage,
+                'is_read': false
+            })
+        });
+        if (response.status === 201) {
+                getMessages(); 
+            }
+        else {
+            alert('Error');
+        }
+        setNewMessage('');
+    };
 
     let getMessages = async () => {
         let response = await fetch(`http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${participantID}/`, {
@@ -51,6 +77,25 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
                             <MessageDetail key={message.id} message={message} user={user} />
                         ))}
                     </div>
+                    <form>
+                        <div className='mb-3 d-flex'>
+                        <textarea
+                            className='form-control flex-grow-1'
+                            rows='1'
+                            placeholder='Type your message...'
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            style={{ resize: 'none' }}
+                        />
+                        <button
+                            type='button'
+                            className='btn btn-primary ms-2'
+                            onClick={handleSendMessage}
+                        >
+                            Send
+                        </button>
+                        </div>
+                    </form>
                 </div>
             )}
         </div>
