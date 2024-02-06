@@ -95,6 +95,12 @@ const HomePage = () => {
               <>
                 <div className='col'>
                   <h3>Chats</h3>
+                    <form className="form-inline my-2 my-lg-0">
+                      <div className="d-flex">
+                          <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
+                          <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                      </div>
+                    </form> 
                   <ul className='list-group inbox-page'>
                     {messages.map((message) => (
                       <MessageListItem
@@ -115,6 +121,8 @@ const HomePage = () => {
                           ? selectedMessage.sender.id
                           : selectedMessage.receiver.id
                       }
+                      onSelect={handleBackToList}
+                      selectedMessage={selectedMessage}
                     />
                   )}
                 </div>
