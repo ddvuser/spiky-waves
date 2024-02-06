@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import AuthContext from '../context/AuthContext';
 import MessageDetail from '../components/MessageDetail';
 import './HomePage.css';
@@ -10,12 +10,24 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
 
     let [isLoading, setIsLoading] = useState(true);
 
+
+    const inboxPageRef = useRef(null);
+
     useEffect(() => {
         console.log('messages refreshed');
         getMessages();
     }, [])
 
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     const [newMessage, setNewMessage] = useState('');
+
+    const scrollToBottom = () => {
+        let lastChildElement = inboxPageRef.current?.lastElementChild;
+        lastChildElement?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     const handleSendMessage = async () => {
         let response = await fetch('http://127.0.0.1:8000/chat/api/send-messages/', {
@@ -32,8 +44,8 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
             })
         });
         if (response.status === 201) {
-                getMessages(); 
-            }
+            getMessages();
+        }
         else {
             alert('Error');
         }
@@ -56,8 +68,7 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
         else if (response.statusText === 'Unauthorized') {
             logoutUser();
         }
-    }    
-
+    }
     return (
         <div>
             {isLoading ? (<Loading />)
@@ -72,13 +83,13 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
                             </button>
                         )}
                     </div>
-                    <div className='inbox-page'>
+                    <div ref={inboxPageRef} className='inbox-page'>
                         {messages.map((message) => (
                             <MessageDetail key={message.id} message={message} user={user} />
                         ))}
                     </div>
                     <form>
-                        <div className='mb-3 d-flex'>
+                        <div className='mt-2 d-flex'>
                         <textarea
                             className='form-control flex-grow-1'
                             rows='1'
@@ -90,7 +101,9 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
                         <button
                             type='button'
                             className='btn btn-primary ms-2'
-                            onClick={handleSendMessage}
+                            onClick={() => {
+                                handleSendMessage();
+                            }}
                         >
                             Send
                         </button>
