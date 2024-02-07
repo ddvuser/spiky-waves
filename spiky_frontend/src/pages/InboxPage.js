@@ -13,7 +13,6 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
   const inboxPageRef = useRef(null);
 
   useEffect(() => {
-    console.log("messages refreshed");
     getMessages();
   }, []);
 
@@ -54,7 +53,7 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
   };
 
   let getMessages = async () => {
-    console.log("get-messages");
+    console.log("Fetch Inbox messages");
     let response = await fetch(
       `http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${participantID}/`,
       {
