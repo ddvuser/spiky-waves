@@ -3,6 +3,7 @@ from authentication.models import CustomUser
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=49)
     bio = models.CharField(max_length=100)
     image = models.ImageField(upload_to="uploads/profile_images/", default='default_profile_pic.png')
     verified = models.BooleanField(default=False)
