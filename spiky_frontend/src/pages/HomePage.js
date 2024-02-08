@@ -129,7 +129,7 @@ const HomePage = () => {
                       <SearchResults searchResults={searchResult} />
                     </div>
                     <button
-                      className="btn btn-outline-info"
+                      className="btn btn-outline-info mt-2"
                       onClick={handleCloseSearchResult}
                     >
                       Back to my chats

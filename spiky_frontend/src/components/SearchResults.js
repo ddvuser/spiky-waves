@@ -1,22 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
+import Modal from "react-modal";
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
 
 function SearchResults({ searchResults }) {
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const openModal = (item) => {
+    setSelectedItem(item);
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+    setIsOpen(false);
+  };
+
   return (
-    <div className="list-group">
+    <ul className="list-group mt-2">
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Item Modal"
+      >
+        {selectedItem && (
+          <div className="d-flex flex-column">
+            <div className="d-flex flex-row-reverse">
+              <button className="btn btn-secondary btn-sm" onClick={closeModal}>
+                X
+              </button>
+            </div>
+            <img
+              src={selectedItem.image}
+              className="rounded-circle me-2"
+              alt={selectedItem.full_name}
+              style={{ width: "35px", height: "35px" }}
+            />
+            <p>{selectedItem.full_name}</p>
+            <p>{selectedItem.bio}</p>
+            <button className="btn btn-outline-dark">Send Message</button>
+          </div>
+        )}
+      </Modal>
       {searchResults.map((result) => (
-        <div key={result.id} className="list-group-item">
+        <li
+          key={result.id}
+          className="list-group-item"
+          onClick={() => openModal(result)}
+          style={{ cursor: "pointer" }}
+        >
           <div className="d-flex align-items-center">
             <img
               src={result.image}
               className="rounded-circle me-2"
               alt={result.full_name}
-              style={{ width: "40px", height: "40px" }}
+              style={{ width: "35px", height: "35px" }}
             />
             <p className="mb-1">{result.full_name}</p>
           </div>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
 
