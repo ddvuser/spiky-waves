@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
+import ProfileModal from "../components/ProfileModal";
 
-function SearchResults({ searchResults }) {
+function SearchResults({ searchResults, onSelectFromSearch }) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -53,24 +54,11 @@ function SearchResults({ searchResults }) {
         style={customStyles}
         contentLabel="Item Modal"
       >
-        {selectedItem && (
-          <div className="d-flex flex-column custom-modal-content">
-            <div className="d-flex flex-row-reverse">
-              <button className="btn btn-secondary btn-sm" onClick={closeModal}>
-                X
-              </button>
-            </div>
-            <img
-              src={selectedItem.image}
-              className="rounded-circle me-2"
-              alt={selectedItem.full_name}
-              style={{ width: "35px", height: "35px" }}
-            />
-            <p>{selectedItem.full_name}</p>
-            <p>{selectedItem.bio}</p>
-            <button className="btn btn-outline-dark">Send Message</button>
-          </div>
-        )}
+        <ProfileModal
+          selectedItem={selectedItem}
+          closeModal={closeModal}
+          onSelectFromSearch={onSelectFromSearch}
+        />
       </Modal>
       {searchResults.map((result) => (
         <li
