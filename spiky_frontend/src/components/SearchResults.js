@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import ProfileModal from "../components/ProfileModal";
 
-function SearchResults({ searchResults, onSelectFromSearch }) {
+function SearchResults({ searchResults, onSendMessageFromModal }) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -57,7 +57,7 @@ function SearchResults({ searchResults, onSelectFromSearch }) {
         <ProfileModal
           selectedItem={selectedItem}
           closeModal={closeModal}
-          onSelectFromSearch={onSelectFromSearch}
+          onSendMessageFromModal={onSendMessageFromModal}
         />
       </Modal>
       {searchResults.map((result) => (

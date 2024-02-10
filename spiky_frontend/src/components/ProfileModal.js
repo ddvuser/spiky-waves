@@ -1,11 +1,12 @@
 import React from "react";
 
-function ProfileModal({ selectedItem, closeModal, onSelectFromSearch }) {
+function ProfileModal({ selectedItem, closeModal, onSendMessageFromModal }) {
   return (
     <>
       {selectedItem && (
         <div className="d-flex flex-column custom-modal-content">
-          <div className="d-flex flex-row-reverse">
+          <div className="d-flex justify-content-between align-items-center">
+            <p>User Profile</p>
             <button className="btn btn-secondary btn-sm" onClick={closeModal}>
               X
             </button>
@@ -17,10 +18,10 @@ function ProfileModal({ selectedItem, closeModal, onSelectFromSearch }) {
             style={{ width: "35px", height: "35px" }}
           />
           <p>{selectedItem.full_name}</p>
-          <p>{selectedItem.bio}</p>
+          <p>Bio: {selectedItem.bio}</p>
           <button
             onClick={() => {
-              onSelectFromSearch(selectedItem);
+              onSendMessageFromModal(selectedItem);
               closeModal();
             }}
             className="btn btn-outline-dark"

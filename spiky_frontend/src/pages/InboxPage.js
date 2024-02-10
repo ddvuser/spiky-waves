@@ -3,8 +3,15 @@ import AuthContext from "../context/AuthContext";
 import MessageDetail from "../components/MessageDetail";
 import "./HomePage.css";
 import Loading from "../components/Loading";
+import ProfileModal from "../components/ProfileModal";
+import Modal from "react-modal";
 
-function InboxPage({ participantID, onSelect, selectedMessage }) {
+function InboxPage({
+  participantID,
+  onSelect,
+  chatParticipants,
+  participantProfile,
+}) {
   let [messages, setGetMessages] = useState([]);
   let { user, authTokens, logoutUser } = useContext(AuthContext);
 
@@ -22,11 +29,51 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
 
   const [newMessage, setNewMessage] = useState("");
 
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const [modalWidth, setModalWidth] = useState(
+    window.innerWidth <= 768 ? "80%" : "30%"
+  );
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      width: modalWidth,
+      maxHeight: "80%",
+      overflow: "auto",
+    },
+  };
+  // Open and Close modal
+  const openModal = (item) => {
+    setIsOpen(true);
+  };
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  // Handle Modal Resize
+  useEffect(() => {
+    const handleResize = () => {
+      setModalWidth(window.innerWidth <= 768 ? "80%" : "30%");
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Scroll to bottom on 1 render, on new message
   const scrollToBottom = () => {
     let lastChildElement = inboxPageRef.current?.lastElementChild;
     lastChildElement?.scrollIntoView({ behavior: "smooth" });
   };
-
   const handleSendMessage = async () => {
     let response = await fetch(
       "http://127.0.0.1:8000/chat/api/send-messages/",
@@ -51,7 +98,6 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
     }
     setNewMessage("");
   };
-
   let getMessages = async () => {
     console.log("Fetch Inbox messages");
     let response = await fetch(
@@ -73,6 +119,7 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
       logoutUser();
     }
   };
+
   return (
     <div>
       {isLoading ? (
@@ -81,7 +128,40 @@ function InboxPage({ participantID, onSelect, selectedMessage }) {
         <div>
           <div className="d-flex align-items-center justify-content-between">
             <h2>Inbox</h2>
-            {selectedMessage && (
+            <div>
+              <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                style={customStyles}
+                contentLabel="Item Modal"
+              >
+                {!participantProfile ? (
+                  <ProfileModal
+                    selectedItem={
+                      chatParticipants.receiver_profile.user !== user.user_id
+                        ? chatParticipants.receiver_profile
+                        : chatParticipants.sender_profile
+                    }
+                    closeModal={closeModal}
+                    onSendMessageFromModal={closeModal}
+                  />
+                ) : (
+                  <ProfileModal
+                    selectedItem={participantProfile}
+                    closeModal={closeModal}
+                    onSendMessageFromModal={closeModal}
+                  />
+                )}
+              </Modal>
+              <div onClick={openModal}>
+                {participantProfile
+                  ? participantProfile.full_name
+                  : chatParticipants.receiver.id !== user.user_id
+                  ? chatParticipants.receiver_profile.full_name
+                  : chatParticipants.sender_profile.full_name}
+              </div>
+            </div>
+            {(chatParticipants || participantProfile) && (
               <button
                 onClick={() => onSelect()}
                 className="btn btn-primary btn-sm"

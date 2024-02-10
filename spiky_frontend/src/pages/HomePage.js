@@ -11,7 +11,8 @@ const HomePage = () => {
   let [messages, setMessages] = useState([]);
   let { user, authTokens, logoutUser } = useContext(AuthContext);
 
-  let [selectedMessage, setSelectedMessage] = useState(null);
+  let [chatParticipants, setChatParticipants] = useState(null);
+  let [selectedProfile, setSelectedProfile] = useState(null);
   let [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
 
   let [isLoading, setIsLoading] = useState(true);
@@ -20,7 +21,7 @@ const HomePage = () => {
 
   useEffect(() => {
     myMessages();
-  }, [selectedMessage]);
+  }, [chatParticipants]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,16 +57,22 @@ const HomePage = () => {
   };
 
   const handleItemClick = (message) => {
-    setSelectedMessage(message);
+    setSelectedProfile(null);
+    setChatParticipants(message);
   };
   const handleBackToList = () => {
-    setSelectedMessage(null);
+    setChatParticipants(null);
+    setSelectedProfile(null);
   };
   const handleSearchResult = (result) => {
     setSearchResult(result);
   };
   const handleCloseSearchResult = () => {
     setSearchResult(null);
+  };
+  const handleSendMessageFromModal = (e) => {
+    setChatParticipants(null);
+    setSelectedProfile(e);
   };
 
   return (
@@ -76,37 +83,53 @@ const HomePage = () => {
         <div className="row">
           {isSmallScreen ? (
             <div className="col">
-              {/* Small screen */}
-              {selectedMessage ? (
+              {/* Small screen (profile selected) */}
+              {selectedProfile && (
                 <InboxPage
-                  key={selectedMessage.id}
+                  key={selectedProfile.id}
+                  participantID={selectedProfile.user}
+                  onSelect={handleBackToList}
+                  chatParticipants={chatParticipants}
+                  participantProfile={selectedProfile}
+                />
+              )}
+              {/* Small screen (profile not selected) */}
+              {chatParticipants && !selectedProfile ? (
+                <InboxPage
+                  key={chatParticipants.id}
                   participantID={
-                    selectedMessage.sender.id !== user.user_id
-                      ? selectedMessage.sender.id
-                      : selectedMessage.receiver.id
+                    chatParticipants.sender.id !== user.user_id
+                      ? chatParticipants.sender.id
+                      : chatParticipants.receiver.id
                   }
                   onSelect={handleBackToList}
-                  selectedMessage={selectedMessage}
+                  chatParticipants={chatParticipants}
                 />
               ) : (
                 <>
-                  <ul className="list-group inbox-page">
-                    <h3>Chats</h3>
-                    <SearchUser onSearchResult={handleSearchResult} />
-                    {searchResult ? (
-                      <SearchResults searchResults={searchResult} />
-                    ) : (
-                      messages.map((message) => (
-                        <MessageListItem
-                          key={message.id}
-                          message={message}
-                          user={user}
-                          onClick={() => handleItemClick(message)}
+                  {/* Small screen, (no profile, no inbox selected ) */}
+                  {!selectedProfile && (
+                    <ul className="list-group inbox-page">
+                      <h3>Chats</h3>
+                      <SearchUser onSearchResult={handleSearchResult} />
+                      {searchResult ? (
+                        <SearchResults
+                          searchResults={searchResult}
+                          onSendMessageFromModal={handleSendMessageFromModal}
                         />
-                      ))
-                    )}
-                  </ul>
-                  {searchResult && (
+                      ) : (
+                        messages.map((message) => (
+                          <MessageListItem
+                            key={message.id}
+                            message={message}
+                            user={user}
+                            onClick={() => handleItemClick(message)}
+                          />
+                        ))
+                      )}
+                    </ul>
+                  )}
+                  {searchResult && !selectedProfile && (
                     <button
                       className="btn btn-outline-info"
                       onClick={handleCloseSearchResult}
@@ -126,7 +149,10 @@ const HomePage = () => {
                 {searchResult ? (
                   <>
                     <div className="inbox-page">
-                      <SearchResults searchResults={searchResult} />
+                      <SearchResults
+                        searchResults={searchResult}
+                        onSendMessageFromModal={handleSendMessageFromModal}
+                      />
                     </div>
                     <button
                       className="btn btn-outline-info mt-2"
@@ -152,16 +178,28 @@ const HomePage = () => {
                 )}
               </div>
               <div className="col-9">
-                {selectedMessage && (
+                {/* Profile selected */}
+                {selectedProfile && (
                   <InboxPage
-                    key={selectedMessage.id}
+                    key={selectedProfile.id}
+                    participantID={selectedProfile.user}
+                    onSelect={handleBackToList}
+                    chatParticipants={chatParticipants}
+                    participantProfile={selectedProfile}
+                  />
+                )}
+                {/* Profile not selected */}
+                {chatParticipants && (
+                  <InboxPage
+                    key={chatParticipants.id}
                     participantID={
-                      selectedMessage.sender.id !== user.user_id
-                        ? selectedMessage.sender.id
-                        : selectedMessage.receiver.id
+                      chatParticipants.sender.id !== user.user_id
+                        ? chatParticipants.sender.id
+                        : chatParticipants.receiver.id
                     }
                     onSelect={handleBackToList}
-                    selectedMessage={selectedMessage}
+                    chatParticipants={chatParticipants}
+                    participantProfile={null}
                   />
                 )}
               </div>
