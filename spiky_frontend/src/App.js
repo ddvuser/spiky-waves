@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import Header from "./components/Header";
 import InboxPage from "./pages/InboxPage";
 import Register from "./pages/RegisterPage";
+import ProfilePage from "./pages/ProfilePage";
 
 import Modal from "react-modal";
 
@@ -27,6 +28,11 @@ function App() {
             <Route
               element={<PrivateRoute component={InboxPage} />}
               path="/inbox/:id"
+              exact
+            />
+            <Route
+              element={<PrivateRoute component={ProfilePage} />}
+              path="/profile"
               exact
             />
             <Route element={<LoginPage />} path="/login" />
