@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
+import AccountSettings from "../components/AccountSettings";
 
 function ProfilePage() {
   let { user, authTokens } = useContext(AuthContext);
@@ -54,7 +55,6 @@ function ProfilePage() {
   const handleEditProfile = async (e) => {
     e.preventDefault();
     // If values have changed
-    console.log(profile);
     if (
       profile &&
       (profile.full_name !== profileName + " " + profileSurname ||
@@ -66,7 +66,9 @@ function ProfilePage() {
       formData.append("user", user.user_id);
       formData.append("full_name", profileName + " " + profileSurname);
       formData.append("bio", profileBio);
-      formData.append("image", profileImage);
+      if (profileImage !== profile.image) {
+        formData.append("image", profileImage);
+      }
       try {
         let response = await fetch(
           `http://127.0.0.1:8000/chat/api/profile/${user.user_id}/`,
@@ -78,7 +80,6 @@ function ProfilePage() {
             body: formData,
           }
         );
-        console.log(response.status);
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -181,6 +182,7 @@ function ProfilePage() {
             </button>
           </form>
         )}
+        <AccountSettings />
       </div>
       <div className="col"></div>
     </div>
