@@ -7,6 +7,20 @@ function ProfilePage() {
   let [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  let [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   // Fetch my profile
   const getMyProfile = async () => {
     try {
@@ -97,9 +111,9 @@ function ProfilePage() {
 
   return (
     <div className="row">
-      <div className="col"></div>
-      <div className="col-6">
-        <h2>Profile settings</h2>
+      {!isSmallScreen && <div className="col"></div>}
+      <div className={!isSmallScreen ? "col-6" : "col ms-1 me-1"}>
+        <h2>Profile settings:</h2>
         {profile && (
           <form>
             <div className="d-flex justify-content-center">
@@ -178,13 +192,13 @@ function ProfilePage() {
               onClick={handleEditProfile}
               className="btn btn-primary mt-2"
             >
-              Edit
+              Edit Profile
             </button>
           </form>
         )}
         <AccountSettings />
       </div>
-      <div className="col"></div>
+      {!isSmallScreen && <div className="col"></div>}
     </div>
   );
 }
