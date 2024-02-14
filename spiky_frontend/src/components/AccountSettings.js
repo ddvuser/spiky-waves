@@ -31,10 +31,11 @@ function AccountSettings() {
 
   // load user data
   const [isCodeVerified, setIsCodeVerified] = useState(false);
+  const [isUsernameChanged, setIsUsernameChanged] = useState(false);
   useEffect(() => {
     console.log("useEffect - getUserAccountData");
     getUserAccountData();
-  }, [isCodeVerified]);
+  }, [isCodeVerified, isUsernameChanged]);
 
   const [accountEmail, setAccountEmail] = useState("");
   const [accountUsername, setAccountUsername] = useState("");
@@ -48,7 +49,32 @@ function AccountSettings() {
     }
   }, [accountInfo]);
 
-  const handleEditAccountUsername = () => {};
+  const handleEditAccountUsername = async () => {
+    if (accountUsername !== "") {
+      const formData = new FormData();
+      formData.append("user", user.user_id);
+      formData.append("username", accountUsername);
+      try {
+        let response = await fetch(
+          `http://127.0.0.1:8000/chat/api/get-email-change-code/${user.user_id}/`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: "Bearer " + String(authTokens.access),
+            },
+            body: formData,
+          }
+        );
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setIsUsernameChanged(true);
+        console.log("username changed");
+      }
+    } else {
+      console.log("account name is empty");
+    }
+  };
   const handleSendCode = async () => {
     if (verificationCode !== "") {
       const formData = new FormData();
@@ -72,6 +98,8 @@ function AccountSettings() {
         setIsCodeVerified(true);
         setIsCodeRequested(false);
       }
+    } else {
+      console.log("no verification code provided");
     }
   };
   const handleGetCode = async () => {
