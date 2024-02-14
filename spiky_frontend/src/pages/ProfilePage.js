@@ -113,7 +113,7 @@ function ProfilePage() {
     <div className="row">
       {!isSmallScreen && <div className="col"></div>}
       <div className={!isSmallScreen ? "col-6" : "col ms-1 me-1"}>
-        <h2>Profile settings:</h2>
+        <h2>Profile Settings:</h2>
         {profile && (
           <form>
             <div className="d-flex justify-content-center">
