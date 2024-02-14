@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import EmailChangeCode
 
-# Register your models here.
+class EmailChangeCodeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'code', 'created']
+
+admin.site.register(EmailChangeCode, EmailChangeCodeAdmin)

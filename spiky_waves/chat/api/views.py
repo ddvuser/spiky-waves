@@ -1,4 +1,4 @@
-from .serializers import MessageSerializer, ProfileSerializer
+from .serializers import MessageSerializer, ProfileSerializer, UserAccountEditSerializer, UserAccountSerializer
 from chat.models import Message, Profile
 from authentication.models import CustomUser
 from rest_framework import generics
@@ -76,4 +76,14 @@ class SearchUser(generics.ListAPIView):
             )
         serializer = self.get_serializer(users, many=True)
         return Response(serializer.data)
+    
+class UserEdit(generics.RetrieveUpdateAPIView):
+    serializer_class = UserAccountEditSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()
+
+class UserAccount(generics.RetrieveAPIView):
+    serializer_class = UserAccountSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()
     
