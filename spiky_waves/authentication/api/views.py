@@ -3,9 +3,11 @@ from rest_framework.decorators import api_view
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.generics import CreateAPIView
+from rest_framework.views import APIView
 from authentication.models import CustomUser
 from rest_framework import status
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ChangePasswordSerializer
+from rest_framework.permissions import IsAuthenticated
 from chat.models import Profile
 
 class UserCreateView(CreateAPIView):
@@ -51,12 +53,25 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-@api_view(['GET'])
-def get_routes(request):
-    routes = [
-        'api/token',
-        'api/token/refresh',
-        'create-user/',
-    ]
+class ChangePassword(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
 
-    return Response(routes)
+    def put(self, request, pk):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            current_password = serializer.validated_data.get('current_password')
+            new_password = serializer.validated_data.get('new_password')
+
+            user = request.user
+            # Check if the current password matches
+            if not user.check_password(current_password):
+                return Response({'error': 'Current password is incorrect'}, status=400)
+
+            # Set the new password
+            user.set_password(new_password)
+            user.save()
+            
+            return Response({'success': 'Password changed successfully'}, status=200)
+        else:
+            return Response(serializer.errors, status=400)

@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import AccountSettings from "../components/AccountSettings";
+import PasswordSettings from "../components/PasswordSettings";
+import Loading from "../components/Loading";
 
 function ProfilePage() {
   let { user, authTokens } = useContext(AuthContext);
@@ -106,7 +108,11 @@ function ProfilePage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="d-flex justify-content-center">
+        <Loading />
+      </div>
+    );
   }
 
   return (
@@ -197,6 +203,7 @@ function ProfilePage() {
           </form>
         )}
         <AccountSettings />
+        <PasswordSettings />
       </div>
       {!isSmallScreen && <div className="col"></div>}
     </div>
