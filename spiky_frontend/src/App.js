@@ -10,6 +10,7 @@ import Register from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 
 import Modal from "react-modal";
+import "./pages/HomePage.css";
 
 Modal.setAppElement("#root");
 
