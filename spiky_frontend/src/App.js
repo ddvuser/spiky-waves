@@ -9,6 +9,7 @@ import InboxPage from "./pages/InboxPage";
 import Register from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import InitPassResetPage from "./pages/InitPassResetPage";
+import PassResetPage from "./pages/PassResetPage";
 
 import Modal from "react-modal";
 import "./pages/HomePage.css";
@@ -40,6 +41,11 @@ function App() {
             <Route element={<LoginPage />} path="/login" />
             <Route element={<Register />} path="/register" />
             <Route element={<InitPassResetPage />} path="/init-pass-reset" />
+            <Route
+              element={<PassResetPage />}
+              path="/confirm-pass-reset/:token/"
+              exact
+            />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
