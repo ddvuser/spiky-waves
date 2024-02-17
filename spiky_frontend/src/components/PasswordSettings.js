@@ -104,7 +104,7 @@ function PasswordSettings() {
           </div>
           <button
             type="button"
-            className="btn btn-primary mt-2"
+            className="btn btn-primary mt-2 mb-2"
             onClick={handleChangePassword}
           >
             Confirm password change
