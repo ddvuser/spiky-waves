@@ -75,28 +75,34 @@ function InboxPage({
     lastChildElement?.scrollIntoView({ behavior: "smooth" });
   };
   const handleSendMessage = async () => {
-    let response = await fetch(
-      "http://127.0.0.1:8000/chat/api/send-messages/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + String(authTokens.access),
-        },
-        body: JSON.stringify({
-          sender: user.user_id,
-          receiver: participantID,
-          text: newMessage,
-          is_read: false,
-        }),
+    try {
+      const formData = new FormData();
+      formData.append("sender", user.user_id);
+      formData.append("receiver", participantID);
+      formData.append("text", newMessage);
+      formData.append("is_read", false);
+      console.log(formData);
+
+      const response = await fetch(
+        "http://127.0.0.1:8000/chat/api/send-messages/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + String(authTokens.access),
+          },
+          body: formData,
+        }
+      );
+
+      if (response.status === 201) {
+        getMessages();
+      } else {
+        console.log("error while sending message");
       }
-    );
-    if (response.status === 201) {
-      getMessages();
-    } else {
-      alert("Error");
+      setNewMessage("");
+    } catch (error) {
+      console.error("Error:", error);
     }
-    setNewMessage("");
   };
   let getMessages = async () => {
     console.log("Fetch Inbox messages");
