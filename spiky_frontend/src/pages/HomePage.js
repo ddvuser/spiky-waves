@@ -123,7 +123,9 @@ const HomePage = () => {
                             key={message.id}
                             message={message}
                             user={user}
-                            onClick={() => handleItemClick(message)}
+                            onClick={() => {
+                              handleItemClick(message);
+                            }}
                           />
                         ))
                       )}
@@ -170,6 +172,7 @@ const HomePage = () => {
                           key={message.id}
                           message={message}
                           user={user}
+                          unread={message.unread_count}
                           onClick={() => handleItemClick(message)}
                         />
                       ))}
