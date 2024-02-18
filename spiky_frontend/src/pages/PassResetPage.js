@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 function PassResetPage() {
   const [new_password, setNewPassword] = useState("");
   const [confirm_password, setConfirmPassword] = useState("");
   let [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
   let { token } = useParams();
+  let navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -36,6 +37,7 @@ function PassResetPage() {
     } catch (error) {
       console.error("Error:", error);
     } finally {
+      navigate("/login");
     }
   };
 
