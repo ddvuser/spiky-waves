@@ -1,8 +1,8 @@
-import React from 'react';
-import moment from 'moment';
+import React from "react";
+import moment from "moment";
 
-const MessageListItem = ({ message, user, onClick }) => {
-
+const MessageListItem = ({ message, user, onClick, unread }) => {
+  //console.log(`${message.sender_profile.full_name} -> ${unread}`);
   return (
     <li
       key={message.id}
@@ -30,28 +30,53 @@ const MessageListItem = ({ message, user, onClick }) => {
         )}
         <div className="flex-grow-1 ml-3">
           {message.sender.id === user.user_id &&
-
-            (message.receiver.name !== null && message.receiver.surname !== null
-              ? `${message.receiver.name} ${message.receiver.surname}`
-              : message.receiver.username)}
+            (message.receiver.name !== null &&
+            message.receiver.surname !== null ? (
+              <h6 className="d-flex align-items center justify-content-between">
+                {message.sender.name} {message.sender.surname}
+                {unread !== 0 && (
+                  <span className="badge rounded-pill bg-danger">{unread}</span>
+                )}
+              </h6>
+            ) : (
+              <h6 className="d-flex align-items center justify-content-between">
+                {message.receiver.username}
+                {unread !== 0 && (
+                  <span className="badge rounded-pill bg-danger">{unread}</span>
+                )}
+              </h6>
+            ))}
 
           {message.sender.id !== user.user_id &&
+            (message.sender.name !== null && message.sender.surname !== null ? (
+              <h6 className="d-flex align-items center justify-content-between">
+                {message.sender.name} {message.sender.surname}
+                <span className="badge rounded-pill bg-danger">{unread}</span>
+              </h6>
+            ) : (
+              <h6 className="d-flex align-items center justify-content-between">
+                {message.sender.username}
+                {unread !== 0 && (
+                  <span className="badge rounded-pill bg-danger">{unread}</span>
+                )}
+              </h6>
+            ))}
 
-            (message.sender.name !== null && message.sender.surname !== null
-              ? `${message.sender.name} ${message.sender.surname}`
-              : message.sender.username)}
-              
           <div className="small">
             <small>
-              {`${message.sender.id === user.user_id ?
-                "me" : message.sender.username}: ${message.text}`.substring(0, 30)} {message.text.length >= 20 && '...'}
+              {`${
+                message.sender.id === user.user_id
+                  ? "me"
+                  : message.sender.username
+              }: ${message.text}`.substring(0, 30)}{" "}
+              {message.text.length >= 20 && "..."}
             </small>
           </div>
         </div>
       </div>
       <small>
         <span className="badge bg-primary badge-pill text-white">
-          {moment.utc(message.created).local().startOf('seconds').fromNow()}
+          {moment.utc(message.created).local().startOf("seconds").fromNow()}
         </span>
       </small>
     </li>
