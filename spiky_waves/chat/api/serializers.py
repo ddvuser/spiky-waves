@@ -105,6 +105,20 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ["id", "user", "bio", "image", "full_name"]
 
 
+class SendMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = [
+            "id",
+            "sender",
+            "receiver",
+            "text",
+            "created",
+            "updated",
+            "is_read",
+        ]
+
+
 class MessageSerializer(serializers.ModelSerializer):
     receiver_profile = ProfileSerializer(read_only=True)
     sender_profile = ProfileSerializer(read_only=True)
