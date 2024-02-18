@@ -123,6 +123,7 @@ const HomePage = () => {
                             key={message.id}
                             message={message}
                             user={user}
+                            unread={message.unread_count}
                             onClick={() => {
                               handleItemClick(message);
                             }}

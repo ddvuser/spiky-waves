@@ -74,6 +74,7 @@ function InboxPage({
     let lastChildElement = inboxPageRef.current?.lastElementChild;
     lastChildElement?.scrollIntoView({ behavior: "smooth" });
   };
+
   const handleSendMessage = async () => {
     try {
       const formData = new FormData();
@@ -104,25 +105,51 @@ function InboxPage({
       console.error("Error:", error);
     }
   };
-  let getMessages = async () => {
-    console.log("Fetch Inbox messages");
-    let response = await fetch(
-      `http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${participantID}/`,
-      {
-        method: "GET",
 
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + String(authTokens.access),
-        },
+  let getMessages = async () => {
+    try {
+      console.log("Fetch Inbox messages");
+      let response = await fetch(
+        `http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${participantID}/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + String(authTokens.access),
+          },
+        }
+      );
+      let data = await response.json();
+      if (response.status === 200) {
+        setIsLoading(false);
+        setGetMessages(data);
+        // Mark rendered messages as read
+        markMessages(data);
+      } else if (response.statusText === "Unauthorized") {
+        logoutUser();
       }
-    );
-    let data = await response.json();
-    if (response.status === 200) {
-      setIsLoading(false);
-      setGetMessages(data);
-    } else if (response.statusText === "Unauthorized") {
-      logoutUser();
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  };
+
+  let markMessages = async (data) => {
+    try {
+      // Update messages to mark them as read
+      console.log(data.map((message) => message.id));
+      await fetch(
+        `http://127.0.0.1:8000/chat/api/mark-messages-as-read/${user.user_id}/${participantID}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + String(authTokens.access),
+          },
+          body: JSON.stringify(data.map((message) => message.id)),
+        }
+      );
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
     }
   };
 
