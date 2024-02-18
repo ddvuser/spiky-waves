@@ -9,4 +9,8 @@ urlpatterns = [
     path("search-user/<str:username>/", views.SearchUser.as_view()),
     path("get-email-change-code/<int:pk>/", views.UserEdit.as_view()),
     path("get-user-account/<int:pk>/", views.UserAccount.as_view()),
+    path(
+        "mark-messages-as-read/<int:user_id>/<int:participant_id>/",
+        views.MarkMessagesAsRead.as_view(),
+    ),
 ]

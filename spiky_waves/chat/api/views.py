@@ -12,6 +12,7 @@ from django.db.models import Subquery, Q, OuterRef
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
 
 
 class MyMessages(generics.ListAPIView):
@@ -54,7 +55,6 @@ class MyMessages(generics.ListAPIView):
             unread_count = Message.objects.filter(
                 sender=sender_lookup, receiver=self.request.user, is_read=False
             ).count()
-            print(f"{message} -> {unread_count}")
 
             # Add the unread_count as a new field in the message object
             message.unread_count = unread_count
@@ -118,3 +118,22 @@ class UserAccount(generics.RetrieveAPIView):
     serializer_class = UserAccountSerializer
     permission_classes = [IsAuthenticated]
     queryset = CustomUser.objects.all()
+
+
+class MarkMessagesAsRead(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id, participant_id):
+        # Assuming you pass message_ids as a list in the request body
+        message_ids = request.data
+
+        try:
+            # Update the is_read field of messages with the given IDs
+            messages = Message.objects.filter(
+                id__in=message_ids, sender_id=participant_id, receiver_id=user_id
+            )
+            messages.update(is_read=True)
+
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
