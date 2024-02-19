@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
-import AuthContext from "../context/AuthContext";
+import React, { useState, useEffect } from "react";
 
 function InitPassResetPage() {
   const [email, setEmail] = useState("");

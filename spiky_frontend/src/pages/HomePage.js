@@ -73,6 +73,7 @@ const HomePage = () => {
   const handleSendMessageFromModal = (e) => {
     setChatParticipants(null);
     setSelectedProfile(e);
+    console.log(selectedProfile);
   };
 
   return (
@@ -186,7 +187,7 @@ const HomePage = () => {
                 {selectedProfile && (
                   <InboxPage
                     key={selectedProfile.id}
-                    participantID={selectedProfile.user}
+                    participantID={selectedProfile.user.id}
                     onSelect={handleBackToList}
                     chatParticipants={chatParticipants}
                     participantProfile={selectedProfile}

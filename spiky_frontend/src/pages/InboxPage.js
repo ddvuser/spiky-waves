@@ -49,7 +49,8 @@ function InboxPage({
     },
   };
   // Open and Close modal
-  const openModal = (item) => {
+  const openModal = () => {
+    console.log(chatParticipants);
     setIsOpen(true);
   };
   const closeModal = () => {
@@ -109,6 +110,7 @@ function InboxPage({
   let getMessages = async () => {
     try {
       console.log("Fetch Inbox messages");
+      console.log(participantID);
       let response = await fetch(
         `http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${participantID}/`,
         {
@@ -171,9 +173,9 @@ function InboxPage({
                 {!participantProfile ? (
                   <ProfileModal
                     selectedItem={
-                      chatParticipants.receiver_profile.user !== user.user_id
-                        ? chatParticipants.receiver_profile
-                        : chatParticipants.sender_profile
+                      chatParticipants.sender_profile.user.id === participantID
+                        ? chatParticipants.sender_profile
+                        : chatParticipants.receiver_profile
                     }
                     closeModal={closeModal}
                     onSendMessageFromModal={closeModal}
