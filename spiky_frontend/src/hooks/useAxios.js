@@ -13,7 +13,7 @@ export const useAxios = (axiosParams) => {
       const result = await axios.request(params);
       setResponse(result.data);
     } catch (error) {
-      setError(error);
+      setError(error.response);
     } finally {
       setIsLoading(false);
     }

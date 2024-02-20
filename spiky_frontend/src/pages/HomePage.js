@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 import InboxPage from "./InboxPage";
 import "./HomePage.css";
 import { useAxios } from "../hooks/useAxios";
+import { useScreenSize } from "../hooks/useScreenSize";
 
 const HomePage = () => {
   let [latestMessages, setMessages] = useState([]);
@@ -14,23 +15,13 @@ const HomePage = () => {
 
   let [chatParticipants, setChatParticipants] = useState(null);
   let [selectedProfile, setSelectedProfile] = useState(null);
-  let [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
 
   let [loading, setLoading] = useState(true);
 
   let [searchResult, setSearchResult] = useState(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  // Set screen size
+  const { isSmallScreen } = useScreenSize();
 
   // Get latest messages
   const { response, isLoading, error } = useAxios({
@@ -43,11 +34,15 @@ const HomePage = () => {
   });
 
   useEffect(() => {
-    if (response) {
+    if (error) {
+      console.log(
+        `Error status: ${error.status}\nError statusText: ${error.statusText}\nError detail: ${error.data.detail}`
+      );
+    } else if (response) {
       setMessages(response);
       setLoading(isLoading);
     }
-  }, [response]);
+  }, [response, error]);
 
   const handleItemClick = (message) => {
     setSelectedProfile(null);
@@ -68,7 +63,7 @@ const HomePage = () => {
     setSelectedProfile(e);
   };
 
-  if (isLoading) {
+  if (loading) {
     return <Loading />;
   }
 
@@ -81,7 +76,7 @@ const HomePage = () => {
             {selectedProfile && (
               <InboxPage
                 key={selectedProfile.id}
-                participantID={selectedProfile.user}
+                participantID={selectedProfile.user.id}
                 onSelect={handleBackToList}
                 chatParticipants={chatParticipants}
                 participantProfile={selectedProfile}
