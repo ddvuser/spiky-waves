@@ -1,6 +1,8 @@
 # Spiky Waves
 
-Django Chat application
+Django-Rest and React Chat application
+
+![alt text for screen readers](chat_preview.png "Text to show on mouseover")
 
 ## PostgreSQL configuration
 
