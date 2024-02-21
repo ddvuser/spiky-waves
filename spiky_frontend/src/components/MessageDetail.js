@@ -50,7 +50,7 @@ const MessageItem = ({ message, user }) => {
             <div className="d-flex flex-row-reverse">
               <div className="d-flex align-items-center flex-row-reverse">
                 <img
-                  src={message.receiver_profile.image}
+                  src={message.sender_profile.image}
                   className="rounded-circle mr-1"
                   alt="1"
                   width={40}

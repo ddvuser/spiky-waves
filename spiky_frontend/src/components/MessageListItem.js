@@ -33,7 +33,7 @@ const MessageListItem = ({ message, user, onClick, unread }) => {
             (message.receiver.name !== null &&
             message.receiver.surname !== null ? (
               <h6 className="d-flex align-items center justify-content-between">
-                {message.sender.name} {message.sender.surname}
+                {message.receiver.name} {message.receiver.surname}
                 {unread !== 0 && (
                   <span className="badge rounded-pill bg-danger">{unread}</span>
                 )}

@@ -5,6 +5,7 @@ import "./HomePage.css";
 import Loading from "../components/Loading";
 import ProfileModal from "../components/ProfileModal";
 import Modal from "react-modal";
+import { useAxios } from "../hooks/useAxios";
 
 function InboxPage({
   participantID,
@@ -12,10 +13,10 @@ function InboxPage({
   chatParticipants,
   participantProfile,
 }) {
-  let [messages, setGetMessages] = useState([]);
+  let [inboxMessages, setInboxMessages] = useState([]);
   let { user, authTokens, logoutUser } = useContext(AuthContext);
 
-  let [isLoading, setIsLoading] = useState(true);
+  let [loading, setLoading] = useState(true);
 
   const inboxPageRef = useRef(null);
 
@@ -25,7 +26,7 @@ function InboxPage({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [inboxMessages]);
 
   const [newMessage, setNewMessage] = useState("");
 
@@ -50,7 +51,6 @@ function InboxPage({
   };
   // Open and Close modal
   const openModal = () => {
-    console.log(chatParticipants);
     setIsOpen(true);
   };
   const closeModal = () => {
@@ -109,7 +109,7 @@ function InboxPage({
 
   let getMessages = async () => {
     try {
-      console.log("Fetch Inbox messages");
+      console.log("Fetch Inbox inboxMessages");
       console.log(participantID);
       let response = await fetch(
         `http://127.0.0.1:8000/chat/api/get-messages/${user.user_id}/${participantID}/`,
@@ -123,21 +123,21 @@ function InboxPage({
       );
       let data = await response.json();
       if (response.status === 200) {
-        setIsLoading(false);
-        setGetMessages(data);
-        // Mark rendered messages as read
+        setLoading(false);
+        setInboxMessages(data);
+        // Mark rendered inboxMessages as read
         markMessages(data);
       } else if (response.statusText === "Unauthorized") {
         logoutUser();
       }
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("Error fetching inboxMessages:", error);
     }
   };
 
   let markMessages = async (data) => {
     try {
-      // Update messages to mark them as read
+      // Update inboxMessages to mark them as read
       console.log(data.map((message) => message.id));
       await fetch(
         `http://127.0.0.1:8000/chat/api/mark-messages-as-read/${user.user_id}/${participantID}/`,
@@ -151,88 +151,88 @@ function InboxPage({
         }
       );
     } catch (error) {
-      console.error("Error marking messages as read:", error);
+      console.error("Error marking inboxMessages as read:", error);
     }
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <div>
-          <div className="d-flex align-items-center justify-content-between">
-            <h2>Inbox</h2>
-            <div>
-              <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                style={customStyles}
-                contentLabel="Item Modal"
-              >
-                {!participantProfile ? (
-                  <ProfileModal
-                    selectedItem={
-                      chatParticipants.sender_profile.user.id === participantID
-                        ? chatParticipants.sender_profile
-                        : chatParticipants.receiver_profile
-                    }
-                    closeModal={closeModal}
-                    onSendMessageFromModal={closeModal}
-                  />
-                ) : (
-                  <ProfileModal
-                    selectedItem={participantProfile}
-                    closeModal={closeModal}
-                    onSendMessageFromModal={closeModal}
-                  />
-                )}
-              </Modal>
-              <div onClick={openModal}>
-                {participantProfile
-                  ? participantProfile.full_name
-                  : chatParticipants.receiver.id !== user.user_id
-                  ? chatParticipants.receiver_profile.full_name
-                  : chatParticipants.sender_profile.full_name}
-              </div>
+      <div>
+        <div className="d-flex align-items-center justify-content-between">
+          <h2>Inbox</h2>
+          <div>
+            <Modal
+              isOpen={modalIsOpen}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="Item Modal"
+            >
+              {!participantProfile ? (
+                <ProfileModal
+                  selectedItem={
+                    chatParticipants.sender_profile.user.id === participantID
+                      ? chatParticipants.sender_profile
+                      : chatParticipants.receiver_profile
+                  }
+                  closeModal={closeModal}
+                  onSendMessageFromModal={closeModal}
+                />
+              ) : (
+                <ProfileModal
+                  selectedItem={participantProfile}
+                  closeModal={closeModal}
+                  onSendMessageFromModal={closeModal}
+                />
+              )}
+            </Modal>
+            <div onClick={openModal}>
+              {participantProfile
+                ? participantProfile.full_name
+                : chatParticipants.receiver.id !== user.user_id
+                ? chatParticipants.receiver_profile.full_name
+                : chatParticipants.sender_profile.full_name}
             </div>
-            {(chatParticipants || participantProfile) && (
-              <button
-                onClick={() => onSelect()}
-                className="btn btn-primary btn-sm"
-              >
-                Back to List
-              </button>
-            )}
           </div>
-          <div ref={inboxPageRef} className="inbox-page">
-            {messages.map((message) => (
-              <MessageDetail key={message.id} message={message} user={user} />
-            ))}
-          </div>
-          <form>
-            <div className="mt-2 d-flex">
-              <textarea
-                className="form-control flex-grow-1"
-                rows="1"
-                placeholder="Type your message..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                style={{ resize: "none" }}
-              />
-              <button
-                type="button"
-                className="btn btn-primary ms-2"
-                onClick={() => {
-                  handleSendMessage();
-                }}
-              >
-                Send
-              </button>
-            </div>
-          </form>
+          {(chatParticipants || participantProfile) && (
+            <button
+              onClick={() => onSelect()}
+              className="btn btn-primary btn-sm"
+            >
+              Back to List
+            </button>
+          )}
         </div>
-      )}
+        <div ref={inboxPageRef} className="inbox-page">
+          {inboxMessages.map((message) => (
+            <MessageDetail key={message.id} message={message} user={user} />
+          ))}
+        </div>
+        <form>
+          <div className="mt-2 d-flex">
+            <textarea
+              className="form-control flex-grow-1"
+              rows="1"
+              placeholder="Type your message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              style={{ resize: "none" }}
+            />
+            <button
+              type="button"
+              className="btn btn-primary ms-2"
+              onClick={() => {
+                handleSendMessage();
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

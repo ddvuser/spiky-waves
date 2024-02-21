@@ -77,7 +77,6 @@ function ProfilePage() {
         profile.bio !== profileBio ||
         profile.image !== profileImage)
     ) {
-      console.log([profileName, profileSurname, profileBio, profileImage]);
       const formData = new FormData();
       formData.append("user", user.user_id);
       formData.append("full_name", profileName + " " + profileSurname);
@@ -85,6 +84,7 @@ function ProfilePage() {
       if (profileImage !== profile.image) {
         formData.append("image", profileImage);
       }
+      console.log(formData);
       try {
         let response = await fetch(
           `http://127.0.0.1:8000/chat/api/profile/${user.user_id}/`,

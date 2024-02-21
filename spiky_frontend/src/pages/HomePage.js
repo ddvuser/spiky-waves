@@ -24,7 +24,7 @@ const HomePage = () => {
   const { isSmallScreen } = useScreenSize();
 
   // Get latest messages
-  const { response, isLoading, error } = useAxios({
+  const { response, isLoading, error, refetchData } = useAxios({
     method: "get",
     url: `/chat/api/my-messages/${user.user_id}/`,
     headers: {
